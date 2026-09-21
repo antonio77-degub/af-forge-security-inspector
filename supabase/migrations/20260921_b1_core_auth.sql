@@ -146,7 +146,7 @@ create table public.finding_remediations (
   platform_key text,
   summary text not null,
   instructions jsonb not null default '[]'::jsonb,
-  references jsonb not null default '[]'::jsonb,
+  reference_links jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
 
