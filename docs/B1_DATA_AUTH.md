@@ -24,14 +24,24 @@ All persisted tenant data is tied to `project_id`. RLS is based on project membe
 - `anon` receives no direct table grants.
 - Guest scan persistence, if needed later, goes through server-side APIs, not browser-to-table writes.
 
-## Current blocker
-A dedicated Supabase organization/project for Security Inspector does not yet exist. The only connected organization remains `joker trader Org`; B1 migration must never be applied there.
+## Canonical Supabase environment
+- Project: `af-forge-security-inspector`
+- Project ref: `cmzfpjwzlwgfuymndjrg`
+- Region: `eu-west-3`
+- This project is isolated from the Trader project and is the only Supabase target authorized for Security Inspector migrations.
 
-## B1 PASS requires
-1. Dedicated Supabase project created for Security Inspector.
-2. Migration `20260921_b1_core_auth.sql` applied to that project only.
-3. Security advisor reviewed with no unresolved RLS exposure.
-4. Publishable URL/key configured in deployment environment.
-5. Magic-link login works end-to-end.
-6. Cross-user isolation test passes.
-7. GitHub CI typecheck/test/build passes.
+## B1 validation state
+- Dedicated Supabase project: PASS
+- Core migration: PASS
+- RLS hardening migration: PASS
+- RLS performance migration: PASS
+- Foreign-key indexes migration: PASS
+- 25/25 public tables with RLS enabled: PASS
+- Supabase Security Advisor: PASS (0 security lints)
+- Generated TypeScript database types committed: PASS
+- GitHub CI typecheck/test/build: PASS
+- Deployment environment URL/key: PENDING
+- Magic-link login end-to-end: PENDING
+- Cross-user isolation E2E: PENDING
+
+B1 overall remains IN PROGRESS until the three pending runtime/auth checks are evidenced.
