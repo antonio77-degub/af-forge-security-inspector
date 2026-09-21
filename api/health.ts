@@ -2,6 +2,6 @@ export default function handler(_req: unknown, res: { status: (code: number) => 
   res.status(200).json({
     status: 'ok',
     service: 'af-forge-security-inspector',
-    phase: 'B0',
+    phase: 'B1',
   });
 }
