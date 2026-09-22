@@ -2,13 +2,14 @@ import { useState, type FormEvent } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from './AuthProvider';
+import { safeNextPath } from './safeNextPath';
 
 export function SignInPage() {
   const { configured, user } = useAuth();
   const [params] = useSearchParams();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<string | null>(null);
-  const next = params.get('next') || '/';
+  const next = safeNextPath(params.get('next'));
 
   if (user) return <Navigate to={next} replace />;
 
