@@ -22,7 +22,7 @@ The scanner providers are intentionally not implemented yet. B1 establishes the 
 - Production platform: Vercel project `af-forge-security-inspector`.
 - Production branch: `main`.
 - Browser environment variables are limited to `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
-- Never expose service-role, secret, Trader, or unrelated project credentials to the frontend.
+- Never expose service-role, secret, or unrelated project credentials to the frontend.
 
 ## Security
 Never place service-role or provider credentials in `VITE_*`. Browser variables are public by design. Tenant tables use RLS; public scans do not require a user account, but saved state does.
