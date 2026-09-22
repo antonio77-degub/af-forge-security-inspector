@@ -10,6 +10,7 @@
 body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 50% -20%, #16213a 0, #080b10 38%); }
 button, input { font: inherit; }
 button { color: inherit; }
+button:disabled { opacity: .55; cursor: not-allowed; }
 a { color: inherit; text-decoration: none; }
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 230px 1fr; }
 .sidebar { border-right: 1px solid #202734; padding: 22px 16px; background: rgba(8,11,16,.88); backdrop-filter: blur(18px); position: sticky; top: 0; height: 100vh; }
@@ -67,5 +68,10 @@ p { color: #9aa8ba; line-height: 1.65; }
 .auth-form { display: grid; gap: 14px; margin-top: 24px; }
 .auth-form label { display: grid; gap: 8px; color: #a9b4c3; font-size: 13px; }
 .auth-form input { border: 1px solid #303a4b; color: #f6f8fb; background: #090d13; padding: 15px 16px; border-radius: 12px; outline: none; }
+.auth-form input:focus { border-color: #7892b7; box-shadow: 0 0 0 3px rgba(120,146,183,.12); }
+.auth-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 22px; }
+.auth-switch button { border: 1px solid #283142; border-radius: 12px; padding: 11px 12px; background: #090d13; color: #8795a8; cursor: pointer; }
+.auth-switch button.active { border-color: #9fb2ce; background: #151d29; color: #fff; }
+.link-button { border: 0; background: transparent; color: #8fa6c6; padding: 8px 0 0; cursor: pointer; text-align: center; }
 .notice { border: 1px solid #343f50; border-radius: 14px; padding: 14px 16px; color: #aab5c5; line-height: 1.55; }
 .notice.warning { border-color: #5a4b2f; background: rgba(101,76,29,.12); }
