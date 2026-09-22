@@ -21,29 +21,44 @@ export function AuthCallbackPage() {
         return;
       }
 
-      const code = params.get('code');
+      const mode = params.get('mode');
       const next = safeNextPath(params.get('next'));
 
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) {
-          setMessage(`Falha ao validar acesso: ${error.message}`);
-          return;
-        }
-      }
-
       const { data, error } = await supabase.auth.getSession();
+
       if (error) {
         setMessage(`Falha ao verificar sessão: ${error.message}`);
         return;
       }
 
-      if (data.session) navigate(next, { replace: true });
-      else setMessage('Sessão não encontrada. Solicite um novo link de acesso.');
+      if (data.session) {
+        if (mode === 'recovery') {
+          navigate(`/reset-password?next=${encodeURIComponent(next)}`, { replace: true });
+          return;
+        }
+
+        navigate(next, { replace: true });
+        return;
+      }
+
+      if (params.get('code')) {
+        setMessage('Este link pertence ao fluxo antigo. Volte para Entrar e solicite um novo acesso ou recuperação de senha.');
+        return;
+      }
+
+      setMessage('Sessão não encontrada. Volte para Entrar e tente novamente.');
     };
 
     void run();
   }, [navigate, params]);
 
-  return <div className="page"><div className="eyebrow">AUTH CALLBACK</div><h1>Acesso seguro</h1><p>{message}</p></div>;
+  return (
+    <div className="page auth-page">
+      <section className="auth-card">
+        <div className="eyebrow">AUTH CALLBACK</div>
+        <h1>Acesso seguro</h1>
+        <p>{message}</p>
+      </section>
+    </div>
+  );
 }
