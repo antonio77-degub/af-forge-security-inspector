@@ -8,12 +8,9 @@ import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { PlaceholderPage } from '../pages/PlaceholderPage';
 
-const publicModules = [
+const modules = [
   ['scan', 'Scan'], ['fix', 'Fix Center'], ['exposure', 'Exposure'], ['vulnerabilities', 'Vulnerabilities'],
   ['web', 'Web'], ['dns', 'DNS'], ['tls', 'TLS'], ['email', 'Email'], ['browser', 'Browser'], ['tools', 'Tools'],
-] as const;
-
-const protectedModules = [
   ['assets', 'Assets'], ['history', 'History'], ['monitoring', 'Monitoring'], ['alerts', 'Alerts'],
   ['reports', 'Reports'], ['status', 'Status'],
 ] as const;
@@ -22,15 +19,14 @@ export function App() {
   return (
     <AppShell>
       <Routes>
-        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<SignInPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        {publicModules.map(([path, title]) => <Route key={path} path={`/${path}`} element={<PlaceholderPage title={title} />} />)}
-        {protectedModules.map(([path, title]) => (
+        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        {modules.map(([path, title]) => (
           <Route key={path} path={`/${path}`} element={<ProtectedRoute><PlaceholderPage title={title} /></ProtectedRoute>} />
         ))}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<ProtectedRoute><NotFoundPage /></ProtectedRoute>} />
       </Routes>
     </AppShell>
   );
