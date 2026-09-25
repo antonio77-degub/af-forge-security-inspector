@@ -5,13 +5,10 @@ import { useAuth } from './AuthProvider';
 import { safeNextPath } from './safeNextPath';
 import { MIN_PASSWORD_LENGTH, validatePassword } from './passwordPolicy';
 
-type AuthMode = 'sign-in' | 'sign-up';
-
 export function SignInPage() {
   const { configured, user } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const [mode, setMode] = useState<AuthMode>('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -31,47 +28,20 @@ export function SignInPage() {
     }
 
     setBusy(true);
-    setStatus(mode === 'sign-in' ? 'Entrando…' : 'Criando conta…');
-
-    if (mode === 'sign-in') {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        setStatus('Não foi possível entrar. Confira o e-mail e a senha.');
-        setBusy(false);
-        return;
-      }
-
-      navigate(next, { replace: true });
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?mode=signup&next=${encodeURIComponent(next)}`,
-      },
-    });
+    setStatus('Entrando…');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setStatus(`Não foi possível criar a conta: ${error.message}`);
+      setStatus('Não foi possível entrar. Confira o e-mail e a senha.');
       setBusy(false);
       return;
     }
 
-    if (data.session) {
-      navigate(next, { replace: true });
-      return;
-    }
-
-    setStatus('Conta criada. Abra o e-mail de confirmação e depois volte para entrar com sua senha.');
-    setBusy(false);
+    navigate(next, { replace: true });
   };
 
   const requestPasswordReset = async () => {
     if (!supabase || busy) return;
-
     const normalizedEmail = email.trim();
     if (!normalizedEmail) {
       setStatus('Digite seu e-mail primeiro.');
@@ -80,7 +50,6 @@ export function SignInPage() {
 
     setBusy(true);
     setStatus('Enviando recuperação de senha…');
-
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo: `${window.location.origin}/auth/callback?mode=recovery&next=${encodeURIComponent(next)}`,
     });
@@ -96,34 +65,9 @@ export function SignInPage() {
   return (
     <div className="page auth-page">
       <section className="auth-card">
-        <div className="eyebrow">SECURE ACCESS</div>
-        <h1>{mode === 'sign-in' ? 'Entrar' : 'Criar conta'}</h1>
-        <p>
-          Use e-mail e senha. O login continua salvo neste navegador até você sair.
-        </p>
-
-        <div className="auth-switch" role="tablist" aria-label="Modo de autenticação">
-          <button
-            type="button"
-            className={mode === 'sign-in' ? 'active' : ''}
-            onClick={() => {
-              setMode('sign-in');
-              setStatus(null);
-            }}
-          >
-            Entrar
-          </button>
-          <button
-            type="button"
-            className={mode === 'sign-up' ? 'active' : ''}
-            onClick={() => {
-              setMode('sign-up');
-              setStatus(null);
-            }}
-          >
-            Criar conta
-          </button>
-        </div>
+        <div className="eyebrow">OWNER ACCESS</div>
+        <h1>Entrar</h1>
+        <p>Ambiente privado. Apenas a conta proprietária autorizada pode abrir o Security Inspector.</p>
 
         {!configured ? (
           <div className="notice warning">Supabase não está configurado neste ambiente.</div>
@@ -136,7 +80,7 @@ export function SignInPage() {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="voce@exemplo.com"
+                placeholder="E-mail"
                 autoComplete="email"
               />
             </label>
@@ -148,15 +92,15 @@ export function SignInPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+                autoComplete="current-password"
                 placeholder={`Mínimo de ${MIN_PASSWORD_LENGTH} caracteres`}
               />
             </label>
             <button className="primary-action" type="submit" disabled={busy}>
-              {busy ? 'PROCESSANDO…' : mode === 'sign-in' ? 'ENTRAR' : 'CRIAR CONTA'}
+              {busy ? 'PROCESSANDO…' : 'ENTRAR'}
             </button>
             <button className="link-button" type="button" onClick={() => void requestPasswordReset()} disabled={busy}>
-              Criar ou recuperar senha
+              Recuperar senha
             </button>
           </form>
         )}
